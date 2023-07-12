@@ -1,22 +1,45 @@
 const express = require('express');
+const { body } = require('express-validator');
+
+const feedController = require('../controllers/feed');
+const isAuth = require('../middleware/is-auth');
+
 const router = express.Router();
-const {getPosts, postPosts, getPost, updatePost, deletePost} = require('../controllers/feed')
-const {body} = require('express-validator')
-const isAuth = require('../middleware/is-auth')
 
-router.get('/posts', isAuth, getPosts);
-router.post('/posts', isAuth, [
-    body('title').trim().isLength({min: 5}),
-    body('content').trim().isLength({min: 5})
-], postPosts);
+// GET /feed/posts
+router.get('/posts', isAuth, feedController.getPosts);
 
-router.get('/post/:postId', isAuth, getPost)
+// POST /feed/post
+router.post(
+  '/post',
+  isAuth,
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 5 }),
+    body('content')
+      .trim()
+      .isLength({ min: 5 })
+  ],
+  feedController.createPost
+);
 
-router.put('/post/:postId', isAuth, [
-    body('title').trim().isLength({min: 5}),
-    body('content').trim().isLength({min: 5})
-], updatePost);
+router.get('/post/:postId', isAuth, feedController.getPost);
 
-router.delete('/post/:postId', isAuth, deletePost)
+router.put(
+  '/post/:postId',
+  isAuth,
+  [
+    body('title')
+      .trim()
+      .isLength({ min: 5 }),
+    body('content')
+      .trim()
+      .isLength({ min: 5 })
+  ],
+  feedController.updatePost
+);
+
+router.delete('/post/:postId', isAuth, feedController.deletePost);
 
 module.exports = router;

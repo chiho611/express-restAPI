@@ -52,6 +52,10 @@ app.use((error, req, res, next) => {
 
 mongoose.connect('mongodb+srv://chiho:k3DNW706u9lIcABX@cluster0.swnckh2.mongodb.net/messages')
     .then(result => {
-        app.listen(8080)
+        const server = app.listen(8080)
+        const io = require('./socket').init(server)
+        io.on('connection', socket => {
+            console.log('client connected')
+        })
     })
     .catch(err => console.log(err))
